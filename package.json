@@ -1,11 +1,29 @@
 {
   "name": "accountable-triage",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "TBD",
+  "main": "src/lib.js",
   "scripts": {
-    "test": "test"
+    "start": "npm run build && python3 -m http.serrver 8000 --bind 127.0.0.1",
+    "test": "mocha test/*.js",
+    "lint": "standard",
+    "build": "browserify src/lib.js -o browser/lib.js"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "mocha": "^7.1.1"
+  },
+  "dependencies": {
+    "install": "^0.13.0",
+    "npm": "^6.14.4",
+    "seedrandom": "^3.0.5",
+    "sha3": "^2.1.2"
+  },
+  "standard": {
+    "ignore": [
+      "browser/"
+    ]
+  }
 }
