@@ -14,23 +14,6 @@ module.exports = {
   },
 
   /**
-   * Sample uniformly at random from nonnegative integers below a specified
-   * bound.
-   * @param {number} n - exclusive upper bound
-   * @param {function} rng - rng returning a float between 0 and 1
-   * @returns {number}
-   */
-  uniform: (n, rng) => {
-    if (typeof n !== 'number' || n % 1 !== 0 || n <= 0) {
-      throw new Error('Bound must be positive integer.')
-    }
-    // TODO: investigate best algorithm from
-    // https://github.com/davidbau/seedrandom#other-fast-prng-algorithms
-    const randomFloat = rng()
-    return Math.floor(randomFloat * n)
-  },
-
-  /**
    * Randomly permute array in place using the Durstenfeld shuffle
    * @param {Array} array - array to permute
    * @param {string} seed - RNG seed
@@ -38,8 +21,10 @@ module.exports = {
    */
   randomPermute: (array, seed) => {
     const rng = seedrandom(seed)
-    for (let i = array.length - 1; i > 0; i--) {
-      let j = module.exports.uniform(i, rng)
+    const n = array.length
+    for (let i = n - 1; i > 0; i--) {
+      let randomFloat = rng()
+      let j = Math.floor(randomFloat * n)
       // Swap elements at indices i and j
       let temp = array[i]
       array[i] = array[j]
@@ -49,18 +34,26 @@ module.exports = {
   },
 
   /**
-   * Randomly permutes a list of IDs using the sha3(L) as the seed, where
-   * L consists of all IDs in lexicographical order, with all
+   * Consists of all IDs in lexicographical order, with all
    * whitespace removed, and separated by commas.
-   * @param {Array} array - array to permute
+   * @param {Array} ids
+   * @returns {string}
+   */
+  serialize: (ids) => {
+    ids.forEach((id, index) => {
+      ids[index] = id.replace(/\s/g, '')
+    })
+    ids.sort()
+    return ids.join(',')
+  },
+
+  /**
+   * Randomly permutes a list of IDs using sha3(L) as the seede
+   * @param {Array} ids - array to permute
    * @returns {Array}
    */
-  permuteIDs: (array) => {
-    array.forEach((id, index) => {
-      array[index] = id.replace(/\s/g, '')
-    })
-    array.sort()
-    const L = array.join(',')
-    return module.exports.randomPermute(array, module.exports.hash(L))
+  permuteIDs: (ids) => {
+    const L = module.exports.serialize(ids)
+    return module.exports.randomPermute(ids, module.exports.hash(L))
   }
 }
