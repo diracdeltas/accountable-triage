@@ -3,10 +3,22 @@
     <meta charset="utf8"/>
     <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <link rel="stylesheet" href="styles.css">
     <title>Accountable Triage</title>
-    <script src='src/index.js'></script>
   </head>
   <body>
-    Hello world
+    <div>Enter one patient ID per row:</div>
+    <ol id='ids'>
+      <li><input type='text'></li>
+      <li><input type='text'></li>
+      <li><input type='text'></li>
+    </ol>
+    <div id='buttons'>
+      <button id='addRow'>Add another row</button>
+      <button id='submit'>Submit</button>
+    </div>
+    <ol id='results'>
+    </ol>
+    <script src='index.js'></script>
   </body>
 </html>
