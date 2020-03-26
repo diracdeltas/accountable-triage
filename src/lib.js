@@ -17,7 +17,6 @@ module.exports = {
    * Randomly permute array in place using the Durstenfeld shuffle
    * @param {Array} array - array to permute
    * @param {string} seed - RNG seed
-   * @returns {Array}
    */
   randomPermute: (array, seed) => {
     const rng = seedrandom(seed)
@@ -30,30 +29,40 @@ module.exports = {
       array[i] = array[j]
       array[j] = temp
     }
-    return array
   },
 
   /**
-   * Consists of all IDs in lexicographical order, with all
-   * whitespace removed, and separated by commas.
+   * Consists of all non-empty IDs in lexicographical order, with all
+   * whitespace removed, deduplicated, and separated by commas.
    * @param {Array} ids
-   * @returns {string}
+   * @returns {Object}
    */
   serialize: (ids) => {
-    ids.forEach((id, index) => {
-      ids[index] = id.replace(/\s/g, '')
+    const filtered = []
+    ids.forEach((item) => {
+      if (typeof item !== 'string') {
+        return
+      }
+      const id = item.replace(/\s/g, '')
+      if (id.length && !filtered.includes(id)) {
+        filtered.push(id)
+      }
     })
-    ids.sort()
-    return ids.join(',')
+    filtered.sort()
+    return {
+      serialized: filtered.join(','),
+      filtered
+    }
   },
 
   /**
-   * Randomly permutes a list of IDs using sha3(L) as the seede
+   * Randomly permutes a list of IDs using sha3(L) as the seed
    * @param {Array} ids - array to permute
    * @returns {Array}
    */
   permuteIDs: (ids) => {
-    const L = module.exports.serialize(ids)
-    return module.exports.randomPermute(ids, module.exports.hash(L))
+    const s = module.exports.serialize(ids)
+    module.exports.randomPermute(s.filtered, module.exports.hash(s.serialized))
+    return s.filtered
   }
 }
