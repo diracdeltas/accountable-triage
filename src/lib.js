@@ -44,9 +44,9 @@ module.exports = {
       if (typeof item !== 'string') {
         return
       }
-      const id = item.replace(/\s/g, '')
+      const id = item.replace(/\s/g, '').toLowerCase()
       if (id.length && !filtered.includes(id)) {
-        filtered.push(id.toLowerCase())
+        filtered.push(id)
       }
     })
     filtered.sort()
