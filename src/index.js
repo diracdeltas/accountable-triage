@@ -1,3 +1,4 @@
+'use strict'
 const lib = require('./lib')
 
 window.onload = () => {

@@ -1,3 +1,4 @@
+'use strict'
 const { SHA3 } = require('sha3')
 const seedrandom = require('seedrandom')
 
@@ -45,7 +46,7 @@ module.exports = {
       }
       const id = item.replace(/\s/g, '')
       if (id.length && !filtered.includes(id)) {
-        filtered.push(id)
+        filtered.push(id.toLowerCase())
       }
     })
     filtered.sort()
