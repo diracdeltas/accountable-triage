@@ -2,35 +2,38 @@
 const lib = require('./lib')
 
 window.onload = () => {
-  const elements = {
+  const e = {
     ids: document.getElementById('ids'),
     submit: document.getElementById('submit'),
     addRow: document.getElementById('addRow'),
+    date: document.getElementById('date'),
     results: document.getElementById('results')
   }
 
-  elements.submit.onclick = () => {
-    results.innerHTML = ''
-    results.style.display = 'none'
+  e.submit.onclick = () => {
+    const day = lib.getDate()
+    e.results.innerHTML = ''
+    e.results.style.display = 'none'
     const array = []
     const inputs = ids.querySelectorAll('input')
     inputs.forEach((input) => {
       array.push(input.value)
     })
-    const result = lib.permuteIDs(array)
+    const result = lib.permuteIDs(array, day)
     result.forEach((item) => {
       const li = document.createElement('li')
       li.innerText = item
-      results.appendChild(li)
+      e.results.appendChild(li)
     })
-    results.style.display = 'block'
+    e.results.style.display = 'block'
+    e.date.innerText = `Results generated on: ${day} UTC`
   }
 
-  elements.addRow.onclick = () => {
+  e.addRow.onclick = () => {
     const li = document.createElement('li')
     const input = document.createElement('input')
     input.type = 'text'
     li.appendChild(input)
-    elements.ids.appendChild(li)
+    e.ids.appendChild(li)
   }
 }

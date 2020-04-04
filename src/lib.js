@@ -59,11 +59,21 @@ module.exports = {
   /**
    * Randomly permutes a list of IDs using sha3(L) as the seed
    * @param {Array} ids - array to permute
+   * @param {string?} date - current server date in UTC
    * @returns {Array}
    */
-  permuteIDs: (ids) => {
+  permuteIDs: (ids, date) => {
     const s = module.exports.serialize(ids)
-    module.exports.randomPermute(s.filtered, module.exports.hash(s.serialized))
+    const input = date ? [s.serialized, date].join(',') : s.serialized
+    module.exports.randomPermute(s.filtered, module.exports.hash(input))
     return s.filtered
+  },
+
+  /**
+   * Gets current day (YYYY-MM-DD) in UTC
+   */
+  getDate: () => {
+    const d = new Date()
+    return d.toISOString().split('T')[0]
   }
 }

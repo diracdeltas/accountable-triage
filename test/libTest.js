@@ -70,4 +70,24 @@ describe('permuteIDs', () => {
     const res = lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'])
     assert.strict.deepEqual(res, ['hello', 'number', 'this', 'is'])
   })
+  it('gives same results given a fixed date', () => {
+    const date = '1983-12-01'
+    const res1 = lib.permuteIDs(['1', '2', '3'], date)
+    const res2 = lib.permuteIDs(['1', '2', '3'], date)
+    assert.strict.deepEqual(res1, ['1', '3', '2'])
+    assert.strict.deepEqual(res2, ['1', '3', '2'])
+    const res3 = lib.permuteIDs(['1', '2', '3'], '2020-01-01')
+    assert.strict.deepEqual(res3, ['1', '2', '3'])
+  })
+})
+
+describe('getDate', () => {
+  it('returns a correctly formatted string', () => {
+    const date = lib.getDate()
+    const split = date.split('-')
+    assert(split.length === 3)
+    assert(split[0].length === 4)
+    assert(split[1].length === 2)
+    assert(split[2].length === 2)
+  })
 })
