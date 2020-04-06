@@ -18,7 +18,6 @@
     "mochify": "^6.6.0"
   },
   "dependencies": {
-    "seedrandom": "^3.0.5",
     "sha3": "^2.1.2"
   },
   "standard": {
