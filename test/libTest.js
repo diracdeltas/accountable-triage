@@ -26,36 +26,23 @@ describe('hash', () => {
   })
 })
 
-describe('randomPermute', () => {
-  it('is deterministic', () => {
-    const array1 = ['this', 'is', 'A', 'test']
-    const array2 = ['this', 'is', 'A', 'test']
-    const seed = 'kfjdklffadjfda'
-    lib.randomPermute(array1, seed)
-    lib.randomPermute(array2, seed)
-    assert.strict.deepEqual(array1, array2)
-    assert.strict.deepEqual(array1, ['A', 'this', 'test', 'is'])
-  })
-  it('gives different results for different seeds', () => {
-    const array1 = ['this', 'is', 'A', 'test']
-    const array2 = ['this', 'is', 'A', 'test']
-    lib.randomPermute(array1, 'foo')
-    lib.randomPermute(array2, 'bar')
-    assert.strict.deepEqual(array1, ['test', 'this', 'A', 'is'])
-    assert.strict.deepEqual(array2, ['this', 'A', 'test', 'is'])
-  })
-})
-
-describe('serialize', () => {
-  it('serializes', () => {
-    assert.strict.equal(lib.serialize(['']).serialized, '')
-    assert.strict.equal(lib.serialize(['', 'a', 'B B', 39]).serialized, 'a,bb')
-    assert.strict.equal(lib.serialize(['a', 'd', ' c', 39, 'b']).serialized,
-      'a,b,c,d')
-    assert.strict.equal(lib.serialize(['a', 'd', ' c', 'c', 'b']).serialized,
-      'a,b,c,d')
-    assert.strict.equal(lib.serialize(['328-382', '393', ' -e3']).serialized,
-      '-e3,328-382,393')
+describe('idToHash', () => {
+  it('normalizes the ID', () => {
+    const date = '2020-04-04'
+    const output = {}
+    lib.idToHash('', date, output)
+    lib.idToHash(' ', date, output)
+    lib.idToHash(undefined, date, output)
+    lib.idToHash('123', date, output)
+    lib.idToHash(' 4   5  6     ', date, output)
+    lib.idToHash('aZUki', date, output)
+    lib.idToHash('ABC 11111 0000000000', date, output)
+    assert.strict.deepEqual(output, {
+      '0c395fe62e46cd4ac547437d8f10ad897b61781ee31530fcc2acded9ede3c1e7539a578e161289bf4b5693254eca6f4c0dc190cf1728a2aab3daf742de74d5c8': 'abc111110000000000',
+      'a39878927fe717f4f0135e37a2ea55b0d03b638921fc35aeec00897d4213c4f2c104389c2d820d4e5cd8b8364e772ed8a9f7e1831f1444799184a8412a2b5ccd': '123',
+      '385317ff17c0acfd6c92f8fbb11f8af1390b97733183f19bc02be5c71eb7d23bfa1ebd7f3a16e980df6a8fd470dc9ae3296e097d9b5084cbd46d1d3908cccec4': '456',
+      '822af1ded907b8b455210b2c99005eb9a87f34c21c9e70951da4d33f8b7434e03e8563c2bcc209109ad1194553809cb844bfdc18c858d355bc9bdae6feb15656': 'azuki'
+    })
   })
 })
 
@@ -63,21 +50,21 @@ describe('permuteIDs', () => {
   it('is deterministic', () => {
     const res = lib.permuteIDs(['hello', 'this', 'is', 'number', '42'])
     const res2 = lib.permuteIDs(['hello', 'this', 'is', 'number', '42'])
-    assert.strict.deepEqual(res, ['hello', 'is', 'this', '42', 'number'])
-    assert.strict.deepEqual(res2, ['hello', 'is', 'this', '42', 'number'])
+    assert.strict.deepEqual(res, ['is', 'this', '42', 'number', 'hello'])
+    assert.strict.deepEqual(res2, ['is', 'this', '42', 'number', 'hello'])
   })
   it('filters out dupes and invalid inputs', () => {
     const res = lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'])
-    assert.strict.deepEqual(res, ['hello', 'number', 'this', 'is'])
+    assert.strict.deepEqual(res, ['is', 'this', 'number', 'hello'])
   })
   it('gives same results given a fixed date', () => {
     const date = '1983-12-01'
     const res1 = lib.permuteIDs(['1', '2', '3'], date)
     const res2 = lib.permuteIDs(['1', '2', '3'], date)
-    assert.strict.deepEqual(res1, ['1', '3', '2'])
-    assert.strict.deepEqual(res2, ['1', '3', '2'])
+    assert.strict.deepEqual(res1, ['2', '3', '1'])
+    assert.strict.deepEqual(res2, ['2', '3', '1'])
     const res3 = lib.permuteIDs(['1', '2', '3'], '2020-01-01')
-    assert.strict.deepEqual(res3, ['1', '2', '3'])
+    assert.strict.deepEqual(res3, ['2', '1', '3'])
   })
 })
 
