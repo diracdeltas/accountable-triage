@@ -25,3 +25,16 @@ button {
   padding-top: 15px;
   padding-bottom: 15px;
 }
+
+#dates {
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+#submit {
+  margin-top: 20px;
+}
+
+.indent {
+  margin-left: 50px;
+}

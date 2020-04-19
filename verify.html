@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
     <link rel="stylesheet" href="styles.css">
-    <title>Accountable Triage</title>
+    <title>Verify triage results</title>
   </head>
   <body>
     <div>Enter one patient MRN per row:</div>
@@ -13,13 +13,12 @@
       <li><input type='text'></li>
       <li><input type='text'></li>
     </ol>
-    <div id='buttons' class='indent'>
-      <button id='addRow'>Add another row</button>
-      <button id='submit'>Submit</button>
-    </div>
+    <button id='addRow' class='indent'>Add another row</button>
+    <div id='dates'>Enter lottery date:</div>
+    <input id='dateInput' type="date">
+    <button id='submit'>Submit</button>
     <ol id='results'>
     </ol>
-    <div id='date'></div>
     <script src='index.js'></script>
   </body>
 </html>

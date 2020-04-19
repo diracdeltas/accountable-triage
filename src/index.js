@@ -11,7 +11,12 @@ window.onload = () => {
   }
 
   e.submit.onclick = () => {
-    const day = lib.getDate()
+    const dateInput = document.getElementById('dateInput')
+    const day = dateInput ? dateInput.value : lib.getDate()
+    if (!day) {
+      window.alert('Please enter a valid date.')
+      return
+    }
     e.results.innerHTML = ''
     e.results.style.display = 'none'
     const array = []
@@ -26,7 +31,9 @@ window.onload = () => {
       e.results.appendChild(li)
     })
     e.results.style.display = 'block'
-    e.date.innerText = `Results generated on: ${day} UTC`
+    if (e.date) {
+      e.date.innerText = `Results generated on: ${day} UTC`
+    }
   }
 
   e.addRow.onclick = () => {
