@@ -77,4 +77,11 @@ describe('getDate', () => {
     assert(split[1].length === 2)
     assert(split[2].length === 2)
   })
+  it('gets correct date', () => {
+    // note this is time zone dependent
+    let date = lib.getDate(new Date(1587265965761))
+    assert.strict.equal(date, '2020-04-18')
+    date = lib.getDate(new Date(0))
+    assert.strict.equal(date, '1969-12-31')
+  })
 })

@@ -2359,7 +2359,8 @@ window.onload = () => {
 
   e.submit.onclick = () => {
     const dateInput = document.getElementById('dateInput')
-    const day = dateInput ? dateInput.value : lib.getDate()
+    const d = new Date()
+    const day = dateInput ? dateInput.value : lib.getDate(d)
     if (!day) {
       window.alert('Please enter a valid date.')
       return
@@ -2379,7 +2380,7 @@ window.onload = () => {
     })
     e.resultsContainer.style.display = 'block'
     if (e.date) {
-      e.date.innerText = `Results generated on: ${day} UTC`
+      e.date.innerText = `Results generated on: ${d.toString()}`
       generatePDF(day)
     }
   }
@@ -2445,12 +2446,12 @@ module.exports = {
   },
 
   /**
-   * Gets current day (YYYY-MM-DD) in UTC
+   * Gets current day (YYYY-MM-DD) in local time
    * @returns {string}
    */
-  getDate: () => {
-    const d = new Date()
-    return d.toISOString().split('T')[0]
+  getDate: (d) => {
+    d = d || new Date()
+    return [d.getFullYear(), d.getMonth(), d.getDate()].join('-')
   }
 }
 

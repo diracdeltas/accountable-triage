@@ -22,12 +22,15 @@ button {
 #results {
   padding-top: 15px;
   padding-bottom: 15px;
-  background-color: lavender;
 }
 
 #dates {
   margin-top: 25px;
   margin-bottom: 10px;
+}
+
+#date {
+  font-size: 18px;
 }
 
 #submit {
@@ -39,7 +42,7 @@ button {
 }
 
 #resultsContainer {
-  width: 500px;
+  width: 600px;
   margin: 50px;
   display: none;
 }

@@ -26,7 +26,8 @@ window.onload = () => {
 
   e.submit.onclick = () => {
     const dateInput = document.getElementById('dateInput')
-    const day = dateInput ? dateInput.value : lib.getDate()
+    const d = new Date()
+    const day = dateInput ? dateInput.value : lib.getDate(d)
     if (!day) {
       window.alert('Please enter a valid date.')
       return
@@ -46,7 +47,7 @@ window.onload = () => {
     })
     e.resultsContainer.style.display = 'block'
     if (e.date) {
-      e.date.innerText = `Results generated on: ${day} UTC`
+      e.date.innerText = `Results generated on: ${d.toString()}`
       generatePDF(day)
     }
   }

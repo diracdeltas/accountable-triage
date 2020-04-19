@@ -49,11 +49,16 @@ module.exports = {
   },
 
   /**
-   * Gets current day (YYYY-MM-DD) in UTC
+   * Gets current day (YYYY-MM-DD) in local time
+   * Note month is 1-indexed
    * @returns {string}
    */
-  getDate: () => {
-    const d = new Date()
-    return d.toISOString().split('T')[0]
+  getDate: (d) => {
+    d = d || new Date()
+    const month = String(d.getMonth() + 1)
+    const date = String(d.getDate())
+    const monthString = month.length < 2 ? `0${month}` : month
+    const dateString = date.length < 2 ? `0${date}` : date
+    return [d.getFullYear(), monthString, dateString].join('-')
   }
 }
