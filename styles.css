@@ -20,8 +20,26 @@ button {
 }
 
 #results {
-  display: none;
-  background-color: lavender;
   padding-top: 15px;
   padding-bottom: 15px;
+  background-color: lavender;
+}
+
+#dates {
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+#submit {
+  margin-top: 20px;
+}
+
+.indent {
+  margin-left: 50px;
+}
+
+#resultsContainer {
+  width: 500px;
+  margin: 50px;
+  display: none;
 }

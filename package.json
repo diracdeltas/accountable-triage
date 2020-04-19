@@ -18,6 +18,7 @@
     "mochify": "^6.6.0"
   },
   "dependencies": {
+    "jspdf": "^1.5.3",
     "sha3": "^2.1.2"
   },
   "standard": {
