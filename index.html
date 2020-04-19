@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf8"/>
     <meta name="viewport" content="width=device-width"/>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
     <link rel="stylesheet" href="styles.css">
     <title>Accountable Triage</title>
   </head>
@@ -17,9 +17,13 @@
       <button id='addRow'>Add another row</button>
       <button id='submit'>Submit</button>
     </div>
-    <ol id='results'>
-    </ol>
-    <div id='date'></div>
+    <div id='resultsContainer'>
+      <h3>Highest to lowest priority:</h3>
+      <ol id='results'>
+      </ol>
+      <div id='date'></div>
+    </div>
+    <script src='dist/html2canvas.js'></script>
     <script src='index.js'></script>
   </body>
 </html>

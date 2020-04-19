@@ -1,5 +1,6 @@
 'use strict'
 const lib = require('./lib')
+const { jsPDF } = require('jspdf')
 
 window.onload = () => {
   const e = {
@@ -7,7 +8,20 @@ window.onload = () => {
     submit: document.getElementById('submit'),
     addRow: document.getElementById('addRow'),
     date: document.getElementById('date'),
+    resultsContainer: document.getElementById('resultsContainer'),
     results: document.getElementById('results')
+  }
+
+  const generatePDF = (day) => {
+    var pdf = new jsPDF('p', 'pt', 'a4')
+    pdf.html(e.resultsContainer, {
+      html2canvas: {
+        scale: 0.9
+      },
+      callback: (doc) => {
+        doc.save(`lottery-${day}.pdf`)
+      }
+    })
   }
 
   e.submit.onclick = () => {
@@ -18,7 +32,7 @@ window.onload = () => {
       return
     }
     e.results.innerHTML = ''
-    e.results.style.display = 'none'
+    e.resultsContainer.style.display = 'none'
     const array = []
     const inputs = ids.querySelectorAll('input')
     inputs.forEach((input) => {
@@ -30,9 +44,10 @@ window.onload = () => {
       li.innerText = item
       e.results.appendChild(li)
     })
-    e.results.style.display = 'block'
+    e.resultsContainer.style.display = 'block'
     if (e.date) {
       e.date.innerText = `Results generated on: ${day} UTC`
+      generatePDF(day)
     }
   }
 
