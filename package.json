@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "npm run build && python3 -m http.server 8000 --bind 127.0.0.1",
-    "test": "mochify",
+    "test": "mochify --timeout 5000",
     "watch": "mochify --watch",
     "webdriver": "mochify --wd",
     "lint": "standard",

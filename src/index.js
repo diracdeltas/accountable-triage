@@ -26,7 +26,8 @@ window.onload = () => {
 
   e.submit.onclick = () => {
     const dateInput = document.getElementById('dateInput')
-    const day = dateInput ? dateInput.value : lib.getDate()
+    const d = new Date()
+    const day = dateInput ? dateInput.value : lib.getDate(d)
     if (!day) {
       window.alert('Please enter a valid date.')
       return
@@ -38,17 +39,21 @@ window.onload = () => {
     inputs.forEach((input) => {
       array.push(input.value)
     })
-    const result = lib.permuteIDs(array, day)
-    result.forEach((item) => {
-      const li = document.createElement('li')
-      li.innerText = item
-      e.results.appendChild(li)
+    lib.permuteIDs(array, day).then((result) => {
+      result.forEach((item) => {
+        const li = document.createElement('li')
+        li.innerText = item
+        e.results.appendChild(li)
+      })
+      e.resultsContainer.style.display = 'block'
+      if (e.date) {
+        e.date.innerText = `Results generated on: ${d.toString()}`
+        generatePDF(day)
+      }
+    }).catch((e) => {
+      console.log(e)
+      alert('Error getting results.')
     })
-    e.resultsContainer.style.display = 'block'
-    if (e.date) {
-      e.date.innerText = `Results generated on: ${day} UTC`
-      generatePDF(day)
-    }
   }
 
   e.addRow.onclick = () => {

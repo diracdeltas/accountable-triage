@@ -47,24 +47,26 @@ describe('idToHash', () => {
 })
 
 describe('permuteIDs', () => {
-  it('is deterministic', () => {
-    const res = lib.permuteIDs(['hello', 'this', 'is', 'number', '42'])
-    const res2 = lib.permuteIDs(['hello', 'this', 'is', 'number', '42'])
-    assert.strict.deepEqual(res, ['is', 'this', '42', 'number', 'hello'])
-    assert.strict.deepEqual(res2, ['is', 'this', '42', 'number', 'hello'])
+  it('is deterministic', async () => {
+    const date = '2020-04-19'
+    const res = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date)
+    const res2 = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date)
+    assert.strict.deepEqual(res, ['hello', 'this', 'is', '42', 'number'])
+    assert.strict.deepEqual(res2, res)
   })
-  it('filters out dupes and invalid inputs', () => {
-    const res = lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'])
-    assert.strict.deepEqual(res, ['is', 'this', 'number', 'hello'])
+  it('filters out dupes and invalid inputs', async () => {
+    const date = '2019-12-31'
+    const res = await lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'], date)
+    assert.strict.deepEqual(res, ['hello', 'is', 'this', 'number'])
   })
-  it('gives same results given a fixed date', () => {
+  it('gives same results given a fixed date', async () => {
     const date = '1983-12-01'
-    const res1 = lib.permuteIDs(['1', '2', '3'], date)
-    const res2 = lib.permuteIDs(['1', '2', '3'], date)
-    assert.strict.deepEqual(res1, ['2', '3', '1'])
-    assert.strict.deepEqual(res2, ['2', '3', '1'])
-    const res3 = lib.permuteIDs(['1', '2', '3'], '2020-01-01')
-    assert.strict.deepEqual(res3, ['2', '1', '3'])
+    const res1 = await lib.permuteIDs(['1', '2', '3'], date)
+    const res2 = await lib.permuteIDs(['1', '2', '3'], date)
+    assert.strict.deepEqual(res1, ['2', '1', '3'])
+    assert.strict.deepEqual(res2, res1)
+    const res3 = await lib.permuteIDs(['1', '2', '3'], '2020-01-01')
+    assert.strict.deepEqual(res3, ['3', '2', '1'])
   })
 })
 
@@ -76,5 +78,12 @@ describe('getDate', () => {
     assert(split[0].length === 4)
     assert(split[1].length === 2)
     assert(split[2].length === 2)
+  })
+  it('gets correct date', () => {
+    // note this is time zone dependent
+    let date = lib.getDate(new Date(1587265965761))
+    assert.strict.equal(date, '2020-04-18')
+    date = lib.getDate(new Date(0))
+    assert.strict.equal(date, '1969-12-31')
   })
 })
