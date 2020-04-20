@@ -2372,17 +2372,21 @@ window.onload = () => {
     inputs.forEach((input) => {
       array.push(input.value)
     })
-    const result = lib.permuteIDs(array, day)
-    result.forEach((item) => {
-      const li = document.createElement('li')
-      li.innerText = item
-      e.results.appendChild(li)
+    lib.permuteIDs(array, day).then((result) => {
+      result.forEach((item) => {
+        const li = document.createElement('li')
+        li.innerText = item
+        e.results.appendChild(li)
+      })
+      e.resultsContainer.style.display = 'block'
+      if (e.date) {
+        e.date.innerText = `Results generated on: ${d.toString()}`
+        generatePDF(day)
+      }
+    }).catch((e) => {
+      console.log(e)
+      alert('Error getting results.')
     })
-    e.resultsContainer.style.display = 'block'
-    if (e.date) {
-      e.date.innerText = `Results generated on: ${d.toString()}`
-      generatePDF(day)
-    }
   }
 
   e.addRow.onclick = () => {
@@ -2397,6 +2401,23 @@ window.onload = () => {
 },{"./lib":17,"jspdf":4}],17:[function(require,module,exports){
 'use strict'
 const { SHA3 } = require('sha3')
+
+/**
+ * Converts UTC midnight of local YYYY-MM-DD string to ms since 1970-01-01 UTC
+ * and gets NIST beacon for that time.
+ * @param {string} dateString
+ * @returns {number}
+ */
+const fetchNistBeacon = async (dateString) => {
+  const date = Date.parse(dateString)
+  if (!date) {
+    throw new Error('Invalid date.')
+  }
+  const url = `https://beacon.nist.gov/beacon/2.0/pulse/time/${date}`
+  const resp = await window.fetch(url)
+  const json = await resp.json()
+  return json.pulse.outputValue
+}
 
 module.exports = {
   /**
@@ -2413,16 +2434,16 @@ module.exports = {
   /**
    * Takes hash of date + normalized ID, copys it to a map of hash to ID
    * @param {string} id
-   * @param {string} date
+   * @param {string} salt
    * @param {Object} outputs
    */
-  idToHash: (id, date, outputs) => {
+  idToHash: (id, salt, outputs) => {
     if (typeof id !== 'string') {
       return
     }
     id = id.replace(/\s/g, '').toLowerCase()
     if (id.length) {
-      const input = [date, id].join('|')
+      const input = [salt, id].join('|')
       outputs[module.exports.hash(input)] = id
     }
   },
@@ -2433,9 +2454,10 @@ module.exports = {
    * @param {string} date
    * @returns {Array}
    */
-  permuteIDs: (ids, date) => {
+  permuteIDs: async (ids, date) => {
+    const salt = await fetchNistBeacon(date)
     const hashesToIds = {}
-    ids.forEach((id) => module.exports.idToHash(id, date, hashesToIds))
+    ids.forEach((id) => module.exports.idToHash(id, salt, hashesToIds))
     // Sorts lexicographically. This should be equivalent to
     // sorting numerically in this case since hashes are equal length hex.
     // Ex: ['0f', 'a'].sort() => ['0f', 'a']
@@ -2451,7 +2473,11 @@ module.exports = {
    */
   getDate: (d) => {
     d = d || new Date()
-    return [d.getFullYear(), d.getMonth(), d.getDate()].join('-')
+    const month = String(d.getMonth() + 1)
+    const date = String(d.getDate())
+    const monthString = month.length < 2 ? `0${month}` : month
+    const dateString = date.length < 2 ? `0${date}` : date
+    return [d.getFullYear(), monthString, dateString].join('-')
   }
 }
 
