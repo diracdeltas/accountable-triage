@@ -47,26 +47,27 @@ describe('idToHash', () => {
 })
 
 describe('permuteIDs', () => {
+  const tzCode = '-07:00'
   it('is deterministic', async () => {
     const date = '2020-04-19'
-    const res = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date)
-    const res2 = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date)
-    assert.strict.deepEqual(res, ['hello', 'this', 'is', '42', 'number'])
+    const res = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date, tzCode)
+    const res2 = await lib.permuteIDs(['hello', 'this', 'is', 'number', '42'], date, tzCode)
+    assert.strict.deepEqual(res, ['hello', '42', 'this', 'number', 'is'])
     assert.strict.deepEqual(res2, res)
   })
   it('filters out dupes and invalid inputs', async () => {
     const date = '2019-12-31'
-    const res = await lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'], date)
-    assert.strict.deepEqual(res, ['hello', 'is', 'this', 'number'])
+    const res = await lib.permuteIDs(['hello', '', 'this', 'is', 'number', 42, 'hello'], date, tzCode)
+    assert.strict.deepEqual(res, ['number', 'hello', 'is', 'this'])
   })
   it('gives same results given a fixed date', async () => {
     const date = '1983-12-01'
-    const res1 = await lib.permuteIDs(['1', '2', '3'], date)
-    const res2 = await lib.permuteIDs(['1', '2', '3'], date)
+    const res1 = await lib.permuteIDs(['1', '2', '3'], date, tzCode)
+    const res2 = await lib.permuteIDs(['1', '2', '3'], date, tzCode)
     assert.strict.deepEqual(res1, ['2', '1', '3'])
     assert.strict.deepEqual(res2, res1)
-    const res3 = await lib.permuteIDs(['1', '2', '3'], '2020-01-01')
-    assert.strict.deepEqual(res3, ['3', '2', '1'])
+    const res3 = await lib.permuteIDs(['1', '2', '3'], '2020-01-01', tzCode)
+    assert.strict.deepEqual(res3, ['1', '3', '2'])
   })
 })
 
@@ -85,5 +86,24 @@ describe('getDate', () => {
     assert.strict.equal(date, '2020-04-18')
     date = lib.getDate(new Date(0))
     assert.strict.equal(date, '1969-12-31')
+  })
+})
+
+describe('getTZCode', () => {
+  it('no args', () => {
+    const tz = lib.getTZCode()
+    assert.strict.equal(tz.length, 6)
+    assert.strict.equal(tz[3], ':')
+    assert(['-', '+'].includes(tz[0]))
+  })
+  it('args', () => {
+    const tz = lib.getTZCode(new Date(1587265965761))
+    assert.strict.equal(tz.length, 6)
+    assert.strict.equal(tz[3], ':')
+    assert(['-', '+'].includes(tz[0]))
+    const tz2 = lib.getTZCode(new Date(1587506737836))
+    assert.strict.equal(tz, tz2)
+    const tz3 = lib.getTZCode(new Date('2010-05-05T07:03:51+0800'))
+    assert.strict.equal(tz3, tz2)
   })
 })

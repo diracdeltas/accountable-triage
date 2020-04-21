@@ -53,7 +53,7 @@ window.onload = () => {
       })
       e.resultsContainer.style.display = 'block'
       if (e.date) {
-        e.date.innerHTML = `Results generated on: <br> <b>${d.toString()}</b>. <p style="color:red"><b>For verification purposes, this date and time zone MUST match the time and place at which the lottery was run.</b></p>`
+        e.date.innerText = `Results generated on: ${d.toString()}`
         generatePDF(day)
       }
     }).catch((e) => {

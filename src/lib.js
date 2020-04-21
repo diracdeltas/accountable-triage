@@ -8,7 +8,10 @@ const { SHA3 } = require('sha3')
  * @returns {number}
  */
 const fetchNistBeacon = async (dateString, tzCode) => {
-  const date = Date.parse(dateString.concat('T00:00:00.000', tzCode))
+  if (!tzCode || tzCode.length !== 6 || tzCode[3] !== ':') {
+    throw new Error('Invalid time zone.')
+  }
+  const date = Date.parse(`${dateString}T00:00:00.000${tzCode}`)
   if (!date) {
     throw new Error('Invalid date.')
   }
@@ -79,12 +82,13 @@ module.exports = {
     return [d.getFullYear(), monthString, dateString].join('-')
   },
 
-
- /**
-  * Returns local timezone's offset from UTC as a string +/- HH:MM, e.g. -04:00
+  /**
+  * Returns local timezone's offset from UTC as a string
+  * +/- HH:MM, e.g. -04:00
   */
   getTZCode: (d) => {
     d = d || new Date()
-    return [d.toString().split('GMT')[1].slice(0,3), d.toString().split('GMT')[1].slice(3,5)].join(':')
+    const s = d.toString().split('GMT')[1]
+    return [s.slice(0, 3), s.slice(3, 5)].join(':')
   }
 }
