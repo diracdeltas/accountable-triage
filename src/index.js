@@ -26,10 +26,16 @@ window.onload = () => {
 
   e.submit.onclick = () => {
     const dateInput = document.getElementById('dateInput')
+    const tzInput = document.getElementById('tzInput')
     const d = new Date()
     const day = dateInput ? dateInput.value : lib.getDate(d)
+    const tzCode = tzInput ? tzInput.value : lib.getTZCode(d)
     if (!day) {
       window.alert('Please enter a valid date.')
+      return
+    }
+    if (!tzCode) {
+      window.alert('Please enter a valid time zone.')
       return
     }
     e.results.innerHTML = ''
@@ -39,7 +45,7 @@ window.onload = () => {
     inputs.forEach((input) => {
       array.push(input.value)
     })
-    lib.permuteIDs(array, day).then((result) => {
+    lib.permuteIDs(array, day, tzCode).then((result) => {
       result.forEach((item) => {
         const li = document.createElement('li')
         li.innerText = item
@@ -47,7 +53,7 @@ window.onload = () => {
       })
       e.resultsContainer.style.display = 'block'
       if (e.date) {
-        e.date.innerText = `Results generated on: ${d.toString()}`
+        e.date.innerHTML = `Results generated on: <br> <b>${d.toString()}</b>. <p style="color:red"><b>For verification purposes, this date and time zone MUST match the time and place at which the lottery was run.</b></p>`
         generatePDF(day)
       }
     }).catch((e) => {
