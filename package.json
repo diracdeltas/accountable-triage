@@ -23,7 +23,8 @@
   },
   "standard": {
     "ignore": [
-      "index.js"
+      "index.js",
+      "dist/"
     ]
   }
 }

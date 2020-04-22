@@ -7,8 +7,11 @@ const { SHA3 } = require('sha3')
  * @param {string} dateString
  * @returns {number}
  */
-const fetchNistBeacon = async (dateString) => {
-  const date = Date.parse(dateString)
+const fetchNistBeacon = async (dateString, tzCode) => {
+  if (!tzCode || tzCode.length !== 6 || tzCode[3] !== ':') {
+    throw new Error('Invalid time zone.')
+  }
+  const date = Date.parse(`${dateString}T00:00:00.000${tzCode}`)
   if (!date) {
     throw new Error('Invalid date.')
   }
@@ -53,8 +56,8 @@ module.exports = {
    * @param {string} date
    * @returns {Array}
    */
-  permuteIDs: async (ids, date) => {
-    const salt = await fetchNistBeacon(date)
+  permuteIDs: async (ids, date, tzCode) => {
+    const salt = await fetchNistBeacon(date, tzCode)
     const hashesToIds = {}
     ids.forEach((id) => module.exports.idToHash(id, salt, hashesToIds))
     // Sorts lexicographically. This should be equivalent to
@@ -77,5 +80,15 @@ module.exports = {
     const monthString = month.length < 2 ? `0${month}` : month
     const dateString = date.length < 2 ? `0${date}` : date
     return [d.getFullYear(), monthString, dateString].join('-')
+  },
+
+  /**
+  * Returns local timezone's offset from UTC as a string
+  * +/- HH:MM, e.g. -04:00
+  */
+  getTZCode: (d) => {
+    d = d || new Date()
+    const s = d.toString().split('GMT')[1]
+    return [s.slice(0, 3), s.slice(3, 5)].join(':')
   }
 }

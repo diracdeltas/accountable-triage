@@ -26,10 +26,16 @@ window.onload = () => {
 
   e.submit.onclick = () => {
     const dateInput = document.getElementById('dateInput')
+    const tzInput = document.getElementById('tzInput')
     const d = new Date()
     const day = dateInput ? dateInput.value : lib.getDate(d)
+    const tzCode = tzInput ? tzInput.value : lib.getTZCode(d)
     if (!day) {
       window.alert('Please enter a valid date.')
+      return
+    }
+    if (!tzCode) {
+      window.alert('Please enter a valid time zone.')
       return
     }
     e.results.innerHTML = ''
@@ -39,7 +45,7 @@ window.onload = () => {
     inputs.forEach((input) => {
       array.push(input.value)
     })
-    lib.permuteIDs(array, day).then((result) => {
+    lib.permuteIDs(array, day, tzCode).then((result) => {
       result.forEach((item) => {
         const li = document.createElement('li')
         li.innerText = item
